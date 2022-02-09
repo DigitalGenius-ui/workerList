@@ -1,3 +1,4 @@
+
 const initialState = {
     value  : [
         {
@@ -25,11 +26,15 @@ const workerReducers = (state = initialState.value, action) => {
         case "ADD_ITEM" : 
             state = [...state, action.payload]
             return state;
+        case "UPDATE_ITEM" :
+            const updateItem = state.map((worker) => worker.id === action.payload.id ? action.payload : worker);
+            state = updateItem;
+            return state;
         case "REMOVE_ITEM" :
             return state = state.filter((worker) => worker.id !== action.payload);
         default:
             return state
-    }
+        }
 }
 
 export default workerReducers;

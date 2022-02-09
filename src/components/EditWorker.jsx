@@ -1,7 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { WorkersState } from '../context/Context';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -39,10 +41,54 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EditWorker() {
-  const { setNewEmail, setNewFullName, setNewPhone, setNewSalary, setNewDate} = WorkersState();
+  const { setEmail, 
+    setFullName, setPhone, setSalary, setDate, email, fullName, phone ,salary, date} = WorkersState();
   const classes = useStyles();
-
   const {id} = useParams();
+
+  const workers = useSelector(state => state.worker);
+  const currentWorker = workers.find((worker) => worker.id === parseInt(id));
+
+  const checkEmail = workers.find(worker => worker.id !== parseInt(id) && worker.email === email);
+  const checkPhone = workers.find(worker => worker.id !== parseInt(id) && worker.phone === parseInt(phone));
+  const checkUser = workers.find(worker => worker.id !== parseInt(id) && worker.fullName === fullName);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const updateItem = () => {
+    if(!email || !fullName || !phone || !salary || !date){
+      return alert("Please fill all the spaces");
+    }
+    if(checkEmail){
+      return alert("This Email Already Exist");
+    }
+    if(checkPhone){
+      return alert("This Number Already Exist");
+    }
+    if(checkUser){
+      return alert("This Number Already Exist");
+    }
+    const data = {
+      id : parseInt(id),
+      email, fullName, phone ,salary, date
+    }
+    dispatch({
+        type : "UPDATE_ITEM",
+        payload : data,
+    });
+    navigate("/");
+  }
+
+  useEffect(() => {
+    if(currentWorker){
+      setEmail(currentWorker.email);
+      setFullName(currentWorker.fullName);
+      setPhone(currentWorker.phone);
+      setSalary(currentWorker.salary);
+      setDate(currentWorker.date);
+    }
+  },[currentWorker])
+
 
   return (
     <div className={classes.container}>
@@ -51,33 +97,41 @@ export default function EditWorker() {
             Worker Number {id}
         </Typography>
         <div className={classes.inputs}>
-          <TextField label="Email" variant="outlined" fullWidth
-            className={classes.input} 
-            onClick={(e) => setNewEmail(e.target.value)}
-            InputProps={{ style: { fontSize: 14 } }}
-            InputLabelProps={{ style: { fontSize: 14 } }}/>
-          <TextField label="Full Name" variant="outlined" fullWidth
-          onClick={(e) => setNewFullName(e.target.value)}
-            className={classes.input} 
-            InputProps={{ style: { fontSize: 14 } }}
-            InputLabelProps={{ style: { fontSize: 14 } }}/>
-          <TextField label="Phone" variant="outlined" fullWidth
-          onClick={(e) => setNewPhone(e.target.value)}
-            className={classes.input} 
-            InputProps={{ style: { fontSize: 14 } }}
-            InputLabelProps={{ style: { fontSize: 14 } }}/>
-          <TextField label="Salary" variant="outlined" fullWidth
-          onClick={(e) => setNewSalary(e.target.value)}
-            className={classes.input} 
-            InputProps={{ style: { fontSize: 14 } }}
-            InputLabelProps={{ style: { fontSize: 14 } }}/>
-            <TextField label="dd/mm/yyyy" variant="outlined" fullWidth
-            onClick={(e) => setNewDate(e.target.value)}
-            className={classes.input} 
-            InputProps={{ style: { fontSize: 14 } }}
-            InputLabelProps={{ style: { fontSize: 14 } }}/>
-          </div>
+              <input placeholder="Email"
+                type ="email"
+                className={classes.input}
+                style={{padding : "1rem 0.6rem"}} 
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}/>
+
+              <input placeholder="Full Name"
+                className={classes.input}
+                style={{padding : "1rem 0.6rem"}} 
+                onChange={(e) => setFullName(e.target.value)}
+                value={fullName}/>
+
+              <input placeholder="Phone" 
+                onChange={(e) => setPhone(e.target.value)}
+                value={phone}
+                style={{padding : "1rem 0.6rem"}}
+                type="number"
+                className={classes.input} />
+
+              <input placeholder="Salary"
+                onChange={(e) => setSalary(e.target.value)}
+                value={salary}
+                style={{padding : "1rem 0.6rem"}}
+                type="number"
+                className={classes.input} />
+
+              <input placeholder="dd/mm/yyyy" 
+                onChange={(e) => setDate(e.target.value)}
+                value={date}
+                style={{padding : "1rem 0.6rem"}}
+                className={classes.input}/>
+            </div>
             <Button 
+            onClick={updateItem}
             variant="contained" color="primary">Submit</Button>
       </div>
     </div>

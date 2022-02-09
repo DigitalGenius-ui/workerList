@@ -36,7 +36,7 @@ export default function CreateWorker() {
   setFullName, setPhone, setSalary, setDate, email, fullName, phone ,salary, date} = WorkersState();
   const classes = useStyles();
 
-  const workers = useSelector((state) => state);
+  const workers = useSelector((state) => state.worker);
   const checkEmail = workers.find(worker => worker.email === email && email);
   const checkPhone = workers.find(worker => worker.phone === parseInt(phone));
   const checkUser = workers.find(worker => worker.fullName === fullName && fullName);
@@ -61,12 +61,12 @@ export default function CreateWorker() {
       id : workers[workers.length -1 ].id + 1,
       email, fullName, phone ,salary, date
     }
-    console.log(data);
     dispatch({
         type : "ADD_ITEM",
         payload : data,
     });
     navigate("/");
+    setEmail(""); setFullName(""); setPhone(""); setSalary(""); setDate("");
   }
   
   return (

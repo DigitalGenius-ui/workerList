@@ -1,19 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import App from './App';
 import Context from './context/Context';
-import workerReducers from './feature/reducers/workersReducers';
-
-const store = createStore(workerReducers, composeWithDevTools());
+import { store, persisted } from './feature/reducers/store/store';
+import { PersistGate } from 'redux-persist/integration/react'
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Context>
-        <App />
+        <PersistGate loading={null} persisted={persisted}>
+          <App />
+        </PersistGate>
       </Context>
     </Provider>
   </React.StrictMode>,

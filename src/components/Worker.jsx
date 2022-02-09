@@ -48,7 +48,7 @@ const Workers = () => {
   }));
   const classes = useStyle();
 
-  const rows = useSelector(state => state);
+  const rows = useSelector(state => state.worker);
 
   const dispatch = useDispatch();
 
